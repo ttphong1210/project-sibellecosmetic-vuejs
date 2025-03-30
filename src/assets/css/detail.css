@@ -237,7 +237,7 @@ div.section > div > input {
     height: 40px;
 }
 #order-qty button{
-    background-color: #f0f0f0;
+    background-color: white;
     border: none;
     width: 30%;
     font-size: 1.25rem;
@@ -245,9 +245,9 @@ div.section > div > input {
     height: 100%;
     cursor: pointer;
 }
-#order-qty button:hover{
+/* #order-qty button:hover{
     background-color: #ddd;
-}
+} */
 #order-qty input{
     border: none;
     width: 35%;

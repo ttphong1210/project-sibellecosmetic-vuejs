@@ -31,6 +31,9 @@ body {
     overflow: hidden;
     max-height: 50px;
 }
+.products-description-name a{
+    color: black;
+}
 .products-description-price .mob-text,
 .products-description-subprice .mob-text{
     font-size: .875rem;
@@ -59,15 +62,15 @@ body {
     width: 31%;
     height: 100%;
     font-size: 20px;
-    background-color: #f0f0f0;
+    background-color: white;
     border: none;
     cursor: pointer;
     font-weight: lighter;
     outline: none;
 }
-.quantity-input button:hover {
-    background-color: #ddd;
-  }
+/* .quantity-input button:hover {
+    background-color: #whi;
+  } */
 .book .book-img {
     /* width: 120px; */
     height: 180px;

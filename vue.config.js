@@ -4,11 +4,9 @@ module.exports = defineConfig({
     'bootstrap-vue',
     'vuetify'
   ],
+  devServer: {
+    host: '0.0.0.0',
+    port: 8081,
+    allowedHosts: 'all'
+  },
 })
-// module.exports = {
-//   transpileDependencies: [
-//     'bootstrap-vue',
-//     'vuetify'
-//   ],
-// };
-

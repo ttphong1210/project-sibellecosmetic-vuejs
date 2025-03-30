@@ -17,10 +17,14 @@ import './assets/css/bootstrap.css';
 import BootstrapVueNext from 'bootstrap-vue-next';
 
 import './assets/css/fonts/themify-icons.css';
+import router from './router/index.js';
+import globalMixins from './mixins/globalMixins';
 
 // Use BootstrapVueNext throughout your project
 app.use(BootstrapVueNext);
 
+app.mixin(globalMixins);
+app.use(router);
 // Mount the Vue application
 app.mount('#app');
 // createApp(App).mount('#app')
