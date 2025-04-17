@@ -51,8 +51,12 @@ class CartService{
             cart[cartItem].quantity = quantity;
             this.saveCartToLocalStorage(cart);
            eventBus.emit("load-cart");
-
     }
+    static clearCart(){
+        localStorage.removeItem('cart');
+        eventBus.emit('load-cart');
+    }
+
     
 }
 export {CartService};

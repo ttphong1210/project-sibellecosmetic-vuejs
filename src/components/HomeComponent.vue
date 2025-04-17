@@ -418,6 +418,7 @@ import api from "@/axios.js";
 import favoriteProductMixins from "@/mixins/favoriteProductMixin";
 import cartMixins from "@/mixins/cartMixins";
 import { Navigation } from 'swiper/modules';
+import eventBus from '@/utils/eventBus';
 
 export default {
   mixins: [favoriteProductMixins, cartMixins],
@@ -444,6 +445,7 @@ export default {
   },
   methods: {
     async fetchProducts() {
+      eventBus.emit('show-loading');
       try {
         const responseFeatured = await api.get("productfeatured");
         this.products_featured = responseFeatured.data;
@@ -456,6 +458,8 @@ export default {
       } catch (error) {
         console.error("Error fetching data", error);
         alert("Có lỗi xảy ra khi lấy dữ liệu sản phẩm. Vui lòng thử lại sau.");
+      }finally{
+        eventBus.emit('hide-loading');
       }
     },
     async fetchSlider() {

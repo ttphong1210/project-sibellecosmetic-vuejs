@@ -1,7 +1,7 @@
 
 ul > li {
-    margin-right: 25px;
-     font-weight: lighter;
+    /* margin-right: 25px; */
+     /* font-weight: lighter; */
     cursor: pointer;
 }
 .body{
@@ -30,16 +30,21 @@ ul > li {
 }
 .btn-add-to-cart a{
     color: white;
+    font-size: 14px;
+}
+.btn-add-to-cart a:hover{
+    color: white;
 }
 .btn-add-to-wishlist{
     background-color: white;
-    border-color: black;
+    border: 1px solid black !important;
 }
 .btn-add-to-wishlist:hover{
     background-color: #DCDCDC;
 }
 .btn-add-to-wishlist a{
-    color: black;
+    color: black !important;
+    font-size: 14px;
 }
 
 .section {

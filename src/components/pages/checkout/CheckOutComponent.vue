@@ -32,6 +32,9 @@
                     name="name"
                     v-model="form.name"
                   />
+                  <div v-if="validationError.name" class="text-red-500">
+                    {{ validationError.name[0] }}
+                  </div>
                 </div>
                 <div class="col-md-6 form-group p_star">
                   <span
@@ -48,6 +51,9 @@
                     name="number_phone"
                     v-model="form.number_phone"
                   />
+                  <div v-if="validationError.number_phone" class="text-red-500">
+                    {{ validationError.number_phone[0] }}
+                  </div>
                 </div>
                 <div class="col-md-6 form-group p_star">
                   <span class="placeholder" data-placeholder=" Email"></span>
@@ -61,6 +67,9 @@
                     name="email"
                     v-model="form.email"
                   />
+                  <div v-if="validationError.email" class="text-red-500">
+                    {{ validationError.email[0] }}
+                  </div>
                 </div>
                 <div class="box-body col-md-12">
                   <div class="row">
@@ -81,6 +90,9 @@
                           {{ c.name_city }}
                         </option>
                       </select>
+                      <div v-if="validationError.city" class="text-red-500">
+                    {{ validationError.city[0] }}
+                  </div>
                     </div>
                     <div class="col-md-4 form-group">
                       <select
@@ -99,6 +111,9 @@
                           {{ d.name_district }}
                         </option>
                       </select>
+                      <div v-if="validationError.district" class="text-red-500">
+                    {{ validationError.district[0] }}
+                  </div>
                     </div>
                     <div class="col-md-4 form-group">
                       <select
@@ -116,6 +131,9 @@
                           {{ ward.name_ward }}
                         </option>
                       </select>
+                      <div v-if="validationError.ward" class="text-red-500">
+                    {{ validationError.ward[0] }}
+                  </div>
                     </div>
                   </div>
                 </div>
@@ -134,6 +152,9 @@
                     name="address"
                     v-model="form.address"
                   />
+                  <div v-if="validationError.address" class="text-red-500">
+                    {{ validationError.address[0] }}
+                  </div>
                 </div>
                 <div class="col-md-12 form-group">
                   <div class="creat_account">
@@ -178,7 +199,7 @@
                   </li>
                 </ul>
                 <ul class="list list_2">
-                  <li style="margin: 0;">
+                  <li style="margin: 0">
                     <a class="summary-main table" style="margin: 0px" href="#">
                       <p class="col subtotal-title">Tạm tính:</p>
                       <span class="col text-right">{{
@@ -200,8 +221,9 @@
                         href="#"
                       >
                         <p class="col total-title">Tổng tiền:</p>
-                        <span class="col text-right"> {{ formatCurrency(totalAfterFeeship) }} </span>
-                        
+                        <span class="col text-right">
+                          {{ formatCurrency(totalAfterFeeship) }}
+                        </span>
                       </a>
                     </li>
                   </div>
@@ -213,7 +235,7 @@
                       id="f-option5"
                       name="payments"
                       value="cash"
-                      v-model="form.payment"
+                      v-model="form.payments"
                     />
                     <label for="f-option5">Tiền mặt</label>
                     <div class="check"></div>
@@ -227,7 +249,7 @@
                       id="f-option6"
                       name="payments"
                       value="credit_card"
-                      v-model="form.payment"
+                      v-model="form.payments"
                     />
                     <label for="f-option6">Chuyển khoản</label>
                     <img
@@ -261,11 +283,14 @@
 <script>
 import api from "@/axios";
 import { CartService } from "@/utils/cart";
+import {debounce} from "@/utils/debounce";
+import eventBus from "@/utils/eventBus";
 
 export default {
   data() {
     return {
       loading: false,
+      validationError: "",
       message: "",
       form: {
         name: "",
@@ -275,7 +300,8 @@ export default {
         district: "",
         ward: "",
         address: "",
-        payment: "cash",
+        payments: "cash",
+        notes: "",
       },
       cities: [],
       districts: [],
@@ -309,9 +335,9 @@ export default {
     totalPrice() {
       this.calculateTotalAfterFeeship();
     },
-    feeship(){
+    feeship() {
       this.calculateTotalAfterFeeship();
-    }
+    },
   },
   methods: {
     getCsrfToken() {
@@ -388,7 +414,7 @@ export default {
         }
       } catch (error) {
         alert("Đã xảy ra lỗi khi tính phí vận chuyển. Vui lòng thử lại.");
-        this.feeship = "25000"; // Giá mặc định nếu có lỗi
+        this.feeship = "25000"; 
         console.log(error);
       } finally {
         this.calculateTotalAfterFeeship();
@@ -403,10 +429,42 @@ export default {
           : this.feeship;
       this.totalAfterFeeship = totalProduct + feeAmount;
     },
-
-    async submitOrder(){
-      
-    }
+    async submitOrder() {
+      this.message = "";
+      this.validationError = "";
+      eventBus.emit('show-loading');
+      try{
+        const orderData = {...this.form,
+        city: this.selectedCities,
+        district: this.selectedDistricts,
+        ward: this.selectedWard,
+        cart: CartService.getCart(),
+        totalAfterFeeship: this.totalAfterFeeship,
+      };
+        const response = await api.post("/checkout", orderData);
+        this.message = response.data.message;
+        alert(this.message);
+        CartService.clearCart();
+        window.location.href = "/";
+      }catch(error){
+        if(error.response && error.response.status === 422){
+          this.validationError = error.response.data.error;
+        }else{
+          console.log(error);
+          alert("Có lỗi xảy ra, vui lòng thử lại!");
+        }
+      }finally{
+        eventBus.emit('hide-loading');
+      }
+    },
+  },
+  created(){
+    this.calculateShippingFee = debounce(this.calculateShippingFee, 300);
   },
 };
 </script>
+<style>
+  .text-red-500{
+    color: red;
+  }
+</style>

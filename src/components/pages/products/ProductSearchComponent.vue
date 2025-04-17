@@ -74,8 +74,17 @@
                       >
                         <i class="ti-eye"></i>
                       </a>
-                      <a href="#">
-                        <i class="ti-heart"></i>
+                      <a
+                        class="icon-ti-heart ti-heart-favorite"
+                        :data-id="item.prod_id"
+                      >
+                      <i
+                      class="ti-heart icon-style"
+                      @click="clickToggleFavorite(item)"
+                      :class="
+                        findItemFavorite(item) ? 'favorite-active' : ''
+                      "
+                    ></i>
                       </a>
                       <a href="" @click.prevent="actionAddToCart(item)">
                         <i class="ti-shopping-cart"></i>
@@ -124,6 +133,7 @@ import favoriteProductMixin from "@/mixins/favoriteProductMixin";
 import SidebarFilterComponent from "../SidebarFilterComponent.vue";
 import cartMixins from "@/mixins/cartMixins";
 import api from "@/axios";
+import eventBus from "@/utils/eventBus";
 
 export default {
   mixins: [favoriteProductMixin, cartMixins],
@@ -148,6 +158,7 @@ export default {
   },
   methods: {
     async searchProducts() {
+      eventBus.emit('show-loading');
       try {
         const response = await api.get("search", {
           params: {
@@ -157,6 +168,8 @@ export default {
         this.products = response.data.item.data || [];
       } catch (error) {
         console.error("Lỗi khi tìm kiếm sản phẩm:", error);
+      }finally{
+        eventBus.emit('hide-loading');
       }
     },
   },

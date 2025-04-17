@@ -10,13 +10,14 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 
 // Import custom CSS file
-import './assets/css/style.css';
-import './assets/css/bootstrap.css';
+// import './assets/css/style.css';
+// import './assets/css/bootstrap.css';
+// import './assets/css/fonts/themify-icons.css';
+// import '@/assets/css/admin-css/main.css';
 
 // Import BootstrapVueNext
 import BootstrapVueNext from 'bootstrap-vue-next';
 
-import './assets/css/fonts/themify-icons.css';
 import router from './router/index.js';
 import globalMixins from './mixins/globalMixins';
 

@@ -72,6 +72,7 @@
 </template>
 <script>
 import api from '@/axios';
+import eventBus from '@/utils/eventBus';
 
 export default {
   data() {
@@ -83,12 +84,13 @@ export default {
   },
   methods: {
     async actionTrackingOrder() {
+      eventBus.emit('show-loading');
       try {
         const response = await api.post("tracking-order",{
             order_code: this.orderCode,
             email_order: this.email
         });
-        alert(response.data.messageSuccess);
+        this.messageSuccess = response.data.messageSuccess
         this.$router.push({
             path: "/detail-tracking-order",
             query: {
@@ -101,6 +103,8 @@ export default {
         }else{
             this.messageError = "Có lỗi xảy ra. Vui lòng thử lại sau.";
         }
+      }finally{
+        eventBus.emit('hide-loading');
       }
     },
     

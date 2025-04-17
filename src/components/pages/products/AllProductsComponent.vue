@@ -147,19 +147,27 @@
             <div v-else>
               <p>Không có sản phẩm nào!</p>
             </div>
-            <!-- Nút chuyển trang -->
-            <!-- <button
-              @click="fetchProducts(pagination.prev_page_url)"
-              :disabled="!pagination.prev_page_url"
-            >
-              Trang trước
-            </button>
-            <button
-              @click="fetchProducts(pagination.next_page_url)"
-              :disabled="!pagination.next_page_url"
-            >
-              Trang sau
-            </button> -->
+            <!-- Pagination -->
+            <div class="d-flex justify-content-end mt-3">
+            <nav>
+                <ul class="pagination">
+                <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                    <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)">Lùi</a>
+                </li>
+                <li
+                    v-for="page in totalPages"
+                    :key="page"
+                    class="page-item"
+                    :class="{ active: page === currentPage }"
+                >
+                    <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                </li>
+                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                    <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)">Tiếp</a>
+                </li>
+                </ul>
+            </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -172,6 +180,7 @@ import api from "@/axios.js";
 import favoriteProductMixins from "@/mixins/favoriteProductMixin";
 import cartMixins from "@/mixins/cartMixins";
 import SidebarFilterComponent from "../SidebarFilterComponent.vue";
+import eventBus from "@/utils/eventBus";
 
 export default {
   mixins: [favoriteProductMixins, cartMixins],
@@ -181,23 +190,32 @@ export default {
   data() {
     return {
       products: [],
+      currentPage: 1,
+      totalPages: 1,
     };
   },
   mounted() {
     this.fetchProducts();
   },
   methods: {
-    async fetchProducts(pageUrl = "product") {
+    async fetchProducts(page = 1) {
+      eventBus.emit('show-loading');
       try {
-        const responseProducts = await api.get(pageUrl);
+        const responseProducts = await api.get(`product/?page=${page}`);
         this.products = responseProducts.data.data;
+        this.currentPage = responseProducts.data.current_page;
+        this.totalPages = responseProducts.data.last_page;
       } catch (error) {
         console.error("Error fetch products", error);
+      }finally{
+        eventBus.emit('hide-loading');
       }
     },
-    // async actionAddToCart(proId) {
-    //   await CartService.addToCart(proId);
-    // },
+    changePage(page){
+      if(page >= 1 && page <= this.totalPages){
+        this.fetchProducts(page);
+      }
+    }
   },
 };
 </script>

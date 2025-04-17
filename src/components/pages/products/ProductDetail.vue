@@ -399,6 +399,7 @@ import favoriteProductMixin from "@/mixins/favoriteProductMixin";
 import { CartService } from "@/utils/cart";
 import { SwiperSlide, Swiper } from "swiper/vue";
 import { Navigation } from "swiper/modules";
+import eventBus from "@/utils/eventBus";
 
 export default {
   mixins: [favoriteProductMixin],
@@ -429,6 +430,7 @@ export default {
   },
   methods: {
     async fetchProductDetail() {
+      eventBus.emit('show-loading');
       const productID = this.$route.params.id;
       try {
         const response = await api.get(`detail/${productID}`);
@@ -437,14 +439,13 @@ export default {
         this.mainImage = `http://192.168.2.1:8080/storage/avatar/${this.productDetailItem.prod_img}`;
       } catch (e) {
         alert("Lỗi lấy dữ liệu chi tiết sản phẩm", e);
+      }finally{
+        eventBus.emit('hide-loading');
       }
     },
     changeImageOnClick(file) {
       this.mainImage = this.getImageUrl(file);
     },
-    // getDetailProductUrl(id, slug) {
-    //   return `/detail/${id}/${slug}.html`;
-    // },
     getImageUrl(file) {
       return `http://192.168.2.1:8080/storage/gallery/${file}`;
     },

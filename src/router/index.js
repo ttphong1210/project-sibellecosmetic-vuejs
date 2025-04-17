@@ -2,9 +2,10 @@
 import { createRouter, createWebHistory } from "vue-router"
 import  account_customer from "../router/account_customer.js"
 import  home from "../router/home.js"
+import admin from "./admin.js";
 // import LoginCustomerComponent from "../components/pages/accountCustomer/LoginComponent.vue"
 
-const routes = [...account_customer, ...home];
+const routes = [...account_customer, ...home, ...admin];
 
 const router = createRouter({
     history: createWebHistory(),
