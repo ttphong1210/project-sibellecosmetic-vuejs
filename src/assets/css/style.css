@@ -3284,6 +3284,7 @@ h6 {
     flex: 0 0 25%;
     max-width: 25%;
   }
+  
   .returning_customer .contact_form .col-md-6 {
     flex: 0 0 50%;
     max-width: 50%;
@@ -4991,41 +4992,30 @@ h6 {
 
 @media (min-width: 37.5em) {
   .swiper-slide.swiper-slide {
-    /* going for a 2 column layout here */
     width: 50%;
-
-    /* centeredSlides set to true */
-    /* reposition so first slide appears on left */
     transform: translateX(-50%);
   }
 }
 
 @media (min-width: 43.75em) {
   .swiper-slide.swiper-slide {
-    /* upping it to a 3 column layout */
     width: 33.33333333333%;
 
-    /* centeredSlides set to true */
-    /* reposition so first slide appears on left */
     transform: translateX(-100%);
   }
 }
 
 @media (min-width: 53em) {
   .swiper-slide.swiper-slide {
-    /* and finally the 4 column layout */
     width: 25%;
 
-    /* centeredSlides set to true */
-    /* reposition so first slide appears on left */
     transform: translateX(-150%);
   }
 }
 
 .swiper-pagination {
-  /* show on small viewports */
   display: block;
-}
+} 
 
 @media (min-width: 37.5em) {
   .swiper-pagination {

@@ -134,7 +134,48 @@
                 </div>
               </div>
             </div>
-            <!-- {{$items->links()}} -->
+           <!-- Pagination -->
+           <div class="d-flex justify-content-end mt-3">
+              <nav>
+                <ul class="pagination">
+                  <li
+                    class="page-item"
+                    :class="{ disabled: currentPage === 1 }"
+                  >
+                    <a
+                      class="page-link"
+                      href="#"
+                      @click.prevent="changePage(currentPage - 1)"
+                      >Lùi</a
+                    >
+                  </li>
+                  <li
+                    v-for="page in totalPages"
+                    :key="page"
+                    class="page-item"
+                    :class="{ active: page === currentPage }"
+                  >
+                    <a
+                      class="page-link"
+                      href="#"
+                      @click.prevent="changePage(page)"
+                      >{{ page }}</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    :class="{ disabled: currentPage === totalPages }"
+                  >
+                    <a
+                      class="page-link"
+                      href="#"
+                      @click.prevent="changePage(currentPage + 1)"
+                      >Tiếp</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
 
@@ -157,6 +198,8 @@ export default {
     return {
       productWithBrand: [],
       brandName: "",
+      currentPage: 1,
+      totalPages: 1,
     };
   },
   mounted() {
@@ -164,21 +207,24 @@ export default {
 
   },
   methods: {
-    async fetchProductWithBrand() {
+    async fetchProductWithBrand(page = 1) {
       try {
         const brandID = this.$route.params.id;
-        const response = await api.get(`products/brand/${brandID}`);
+        const response = await api.get(`products/brand/${brandID}/?page=${page}`);
         this.productWithBrand = response.data.productWithBrand.data;
+        this.currentPage = response.data.productWithBrand.current_page;
+        this.totalPages = response.data.productWithBrand.last_page;
         this.brandName = response.data.brandName || "";
       } catch (e) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", e);
         this.productWithBrand = [];
       }
     },
-   
-    // async actionAddToCart(proId) {
-    //   await CartService.addToCart(proId);
-    // },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.fetchProductWithBrand(page);
+      }
+    },
   },
 };
 </script>

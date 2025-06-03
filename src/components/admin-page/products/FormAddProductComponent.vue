@@ -143,6 +143,7 @@
                   name="ImageUpload"
                   style="display: none"
                 />
+                
               </div>
               <div id="thumbbox" v-if="imagePreview">
                 <img
@@ -153,6 +154,9 @@
                   id="thumbimage"
                 />
                 <a class="removeimg" @click.prevent="removeImage"> X </a>
+              </div>
+              <div v-if="validationError.imageAvatar" class="text-red-500">
+                {{ validationError.imageAvatar[0] }}
               </div>
               <div id="boxchoice">
                 <a
@@ -203,6 +207,11 @@
                   </a>
                 </div>
               </div>
+              <div v-if="galleryErrors.length" class="text-red-500">
+                <div v-for="(error, index) in galleryErrors" :key="index">
+                  {{ error }}
+                </div>
+              </div>
               <div id="boxchoice">
                 <a
                   href="javascript:"
@@ -217,27 +226,29 @@
               <label class="control-label"
                 >Tóm tắt chức năng chính sản phẩm</label
               >
-              <textarea
+              <Ckeditor :editor="editor" v-model="form.summary" :config="editorConfig"></Ckeditor>
+              <!-- <textarea
                 class="form-control"
                 name="summary"
                 id="summary"
                 v-model="form.summary"
-              ></textarea>
-              <!-- <script>
-                CKEDITOR.replace("mota");
-              </script> -->
+              ></textarea> -->
+
             </div>
             <div class="form-group col-md-12">
               <label class="control-label">Mô tả sản phẩm</label>
-              <textarea
+              <!-- <textarea
                 class="form-control"
                 name="mota"
                 id="mota"
                 v-model="form.description"
-              ></textarea>
-              <!-- <script>
-                CKEDITOR.replace("mota");
-              </script> -->
+              ></textarea> -->
+              <Ckeditor
+                :editor="editor"
+                v-model="form.description"
+                :config="editorConfig"
+              ></Ckeditor>
+              
             </div>
           </form>
         </div>
@@ -421,8 +432,13 @@ MODAL
 <script>
 import api from "@/axios";
 import eventBus from "@/utils/eventBus";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Ckeditor } from "@ckeditor/ckeditor5-vue";
 
 export default {
+  components: {
+    Ckeditor
+  },
   props: {
     listCategory: {
       type: Array,
@@ -435,12 +451,20 @@ export default {
   },
   data() {
     return {
+      editor: ClassicEditor,
+      editorConfig: {
+        licenseKey: 'GPL',
+          toolbar: [
+            'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'
+          ]
+        },
       validationError: "",
       imagePreview: null,
       imageGalleryPreview: [],
       imageFile: null,
       imageGalleryFile: [],
       inputNameCategory: "",
+      inputNameBrand: "",
       message: "",
       form: {
         name: "",
@@ -455,6 +479,13 @@ export default {
         summary: "",
       },
     };
+  },
+  computed: {
+    galleryErrors(){
+      return Object.keys(this.validationError)
+      .filter(key => key.startsWith('gallery'))
+      .map(key => this.validationError[key][0]);
+    }
   },
   methods: {
     async actionAddCategory() {

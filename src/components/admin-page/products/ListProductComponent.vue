@@ -5,7 +5,6 @@
         <a href="#">Danh sách sản phẩm</a>
       </li>
     </ul>
-    <div id="clock"></div>
   </div>
   <div class="row">
     <div class="col-md-12">
@@ -72,111 +71,160 @@
               </a>
             </div>
           </div>
-          <table class="table table-hover table-bordered" id="sampleTable">
-            <thead>
-              <tr>
-                <th width="10"><input type="checkbox" id="all" /></th>
-                <th>Mã sản phẩm</th>
-                <th>Tên sản phẩm</th>
-                <th>Ảnh</th>
-                <th>Số lượng</th>
-                <th>Tình trạng</th>
-                <th>Giá tiền</th>
-                <th>Danh mục</th>
-                <th>Chức năng</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in listProducts" :key="item.prod_id">
-                <td width="10">
-                  <input type="checkbox" name="check1" value="1" />
-                </td>
-                <td>713090{{ item.prod_id }}</td>
-                <td>{{ item.prod_name }}</td>
-                <td>
-                  <img
-                    :src="getProductAvatar(item.prod_img)"
-                    alt=""
-                    width="100px;"
-                  />
-                </td>
-                <td>{{ item.quantity }}</td>
-                <td>
-                  <span
-                    :class="
-                      item.prod_status === 0
-                        ? 'badge bg-success'
-                        : 'badge bg-danger'
-                    "
-                    >{{
-                      item.prod_status === 0 ? "Còn hàng" : "Hết hàng"
-                    }}</span
+
+          <div
+            id="sampleTable_wrapper"
+            class="dataTables_wrapper container-fluid dt-bootstrap4 no-footer"
+          >
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length" id="sampleTable_length">
+                  <label
+                    >Hiện {{ to }}
+                    
+                    danh mục trong {{totalProducts}} danh mục</label
                   >
-                </td>
-                <td>{{ formatCurrency(item.prod_price) }}</td>
-                <td>{{ item.cate_name }}</td>
-                <td>
-                  <button
-                    class="btn btn-primary btn-sm trash"
-                    type="button"
-                    title="Xóa"
-                    @click.prevent="deleteProduct(item.prod_id)"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                  <button
-                    class="btn btn-primary btn-sm edit"
-                    type="button"
-                    title="Sửa"
-                    id="show-emp"
-                    data-toggle="modal"
-                    data-target="#ModalUP"
-                    @click="setProductToEdit(item)"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- Pagination -->
-          <div class="d-flex justify-content-end mt-3">
-            <nav>
-              <ul class="pagination">
-                <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                  <a
-                    class="page-link"
-                    href="#"
-                    @click.prevent="changePage(currentPage - 1)"
-                    >Lùi</a
-                  >
-                </li>
-                <li
-                  v-for="page in totalPages"
-                  :key="page"
-                  class="page-item"
-                  :class="{ active: page === currentPage }"
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div id="sampleTable_filter" class="dataTables_filter">
+                  <label
+                    >Tìm kiếm:<input
+                      type="search"
+                      class="form-control form-control-sm"
+                      placeholder=""
+                      aria-controls="sampleTable"
+                      v-model="searchQuery"
+                      @keyup.enter="searchProducts"
+                  /></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <table class="table table-hover table-bordered" id="sampleTable">
+                <thead>
+                  <tr>
+                    <th width="10"><input type="checkbox" id="all" /></th>
+                    <th>Mã sản phẩm</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Ảnh</th>
+                    <th>Số lượng</th>
+                    <th>Tình trạng</th>
+                    <th>Giá tiền</th>
+                    <th>Danh mục</th>
+                    <th>Chức năng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in listProducts" :key="item.prod_id">
+                    <td width="10">
+                      <input type="checkbox" name="check1" value="1" />
+                    </td>
+                    <td>713090{{ item.prod_id }}</td>
+                    <td>{{ item.prod_name }}</td>
+                    <td>
+                      <img
+                        :src="getProductAvatar(item.prod_img)"
+                        alt=""
+                        width="100px;"
+                      />
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td>
+                      <span
+                        :class="
+                          item.prod_status === 0
+                            ? 'badge bg-success'
+                            : 'badge bg-danger'
+                        "
+                        >{{
+                          item.prod_status === 0 ? "Còn hàng" : "Hết hàng"
+                        }}</span
+                      >
+                    </td>
+                    <td>{{ formatCurrency(item.prod_price) }}</td>
+                    <td>{{ item.cate_name }}</td>
+                    <td>
+                      <button
+                        class="btn btn-primary btn-sm trash"
+                        type="button"
+                        title="Xóa"
+                        @click.prevent="deleteProduct(item.prod_id)"
+                      >
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                      <button
+                        class="btn btn-primary btn-sm edit"
+                        type="button"
+                        title="Sửa"
+                        id="show-emp"
+                        data-toggle="modal"
+                        data-target="#ModalUP"
+                        @click="setProductToEdit(item)"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-12 col-md-5">
+                <div
+                  class="dataTables_info"
+                  id="sampleTable_info"
+                  role="status"
+                  aria-live="polite"
                 >
-                  <a
-                    class="page-link"
-                    href="#"
-                    @click.prevent="changePage(page)"
-                    >{{ page }}</a
-                  >
-                </li>
-                <li
-                  class="page-item"
-                  :class="{ disabled: currentPage === totalPages }"
-                >
-                  <a
-                    class="page-link"
-                    href="#"
-                    @click.prevent="changePage(currentPage + 1)"
-                    >Tiếp</a
-                  >
-                </li>
-              </ul>
-            </nav>
+                  Hiện {{ from }} đến {{ to }} của {{ totalProducts }} danh mục
+                </div>
+              </div>
+              <!-- Pagination -->
+              <div class="d-flex justify-content-end mt-3 col-md-7">
+                <nav>
+                  <ul class="pagination">
+                    <li
+                      class="page-item"
+                      :class="{ disabled: currentPage === 1 }"
+                    >
+                      <a
+                        class="page-link"
+                        href="#"
+                        @click.prevent="changePage(currentPage - 1)"
+                        >Lùi</a
+                      >
+                    </li>
+                    <li
+                      v-for="page in totalPages"
+                      :key="page"
+                      class="page-item"
+                      :class="{ active: page === currentPage }"
+                    >
+                      <a
+                        class="page-link"
+                        href="#"
+                        @click.prevent="changePage(page)"
+                        >{{ page }}</a
+                      >
+                    </li>
+                    <li
+                      class="page-item"
+                      :class="{ disabled: currentPage === totalPages }"
+                    >
+                      <a
+                        class="page-link"
+                        href="#"
+                        @click.prevent="changePage(currentPage + 1)"
+                        >Tiếp</a
+                      >
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -220,6 +268,9 @@
                 required
                 v-model="productToEdit.prod_name"
               />
+              <div v-if="validationErrors.prod_name" class="text-red-500">
+                {{ validationErrors.prod_name[0] }}
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Số lượng</label>
@@ -229,6 +280,9 @@
                 required
                 v-model="productToEdit.quantity"
               />
+              <div v-if="validationErrors.quantity" class="text-red-500">
+                {{ validationErrors.quantity[0] }}
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label for="exampleSelect1" class="control-label"
@@ -242,6 +296,9 @@
                 <option :value="0">Còn hàng</option>
                 <option :value="1">Hết hàng</option>
               </select>
+              <div v-if="validationErrors.prod_status" class="text-red-500">
+                {{ validationErrors.prod_status[0] }}
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Giá bán</label>
@@ -250,6 +307,9 @@
                 type="text"
                 v-model.number="productToEdit.prod_price"
               />
+              <div v-if="validationErrors.prod_price" class="text-red-500">
+                {{ validationErrors.prod_price[0] }}
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label for="exampleSelect1" class="control-label">Danh mục</label>
@@ -299,6 +359,9 @@
                 <option :value="1">Có</option>
                 <option :value="0">Không</option>
               </select>
+              <div v-if="validationErrors.prod_featured" class="text-red-500">
+                {{ validationErrors.prod_featured[0] }}
+              </div>
             </div>
             <div class="form-group col-md-12">
               <label class="control-label">Ảnh sản phẩm</label>
@@ -355,16 +418,11 @@
                   style="display: flex"
                 >
                   <div
-                    v-for="(img, index) in currentGallery"
+                    v-for="(img, index) in imageCurrentGalleryPreview"
                     :key="'old_' + index"
-                    style="width: 10%; margin-right: 20px"
+                    style="width: 10%; margin-right: 20px; height: 100%"
                   >
-                    <img
-                      :src="`http://192.168.2.1:8080/storage/gallery/${img}`"
-                      alt="Gallery"
-                      width="100%"
-                      height="100%"
-                    />
+                    <img :src="img" alt="Gallery" width="100%" height="auto" />
                     <a
                       class="removeimg"
                       @click.prevent="removeOldGalleryImage(index)"
@@ -377,22 +435,23 @@
                 <div
                   id="thumbbox"
                   v-if="imageGalleryPreview.length"
-                  style="display: flex; margin-top: 10px;"
+                  style="display: flex; margin-top: 10px"
                 >
                   <div
-                    style="width: 10%; margin-right: 20px"
+                    style="width: 10%; margin-right: 20px; height: 100%"
                     v-for="(imgSrc, index) in imageGalleryPreview"
                     :key="index"
                   >
                     <img
                       :src="imgSrc"
-                      height="100%"
+                      height="auto"
                       width="100%"
                       alt="Thumb image"
                       id="thumbimage"
                     />
                     <a
-                      class="removeimg" style="margin-top: 13%;"
+                      class="removeimg"
+                      style="margin-top: 13%"
                       @click.prevent="removeNewGalleryImage(index)"
                     >
                       X
@@ -447,6 +506,7 @@ export default {
   },
   data() {
     return {
+      listProducts: [],
       currentPage: 1,
       totalPages: 1,
       productToEdit: null,
@@ -455,6 +515,12 @@ export default {
       imageFile: null,
       imageGalleryFile: [],
       currentGallery: [],
+      imageCurrentGalleryPreview: [],
+      validationErrors: "",
+      searchQuery: "",
+      totalProducts: "",
+      to: "",
+      form: ""
     };
   },
   mounted() {
@@ -468,6 +534,9 @@ export default {
         this.listProducts = response.data.listProduct.data;
         this.currentPage = response.data.listProduct.current_page;
         this.totalPages = response.data.listProduct.last_page;
+        this.totalProducts = response.data.listProduct.total;
+        this.from = response.data.listProduct.from;
+        this.to = response.data.listProduct.to;
       } catch (error) {
         console.log("error", error);
       } finally {
@@ -484,30 +553,15 @@ export default {
       this.imageFile = product.prod_img;
       this.imagePreview = `http://192.168.2.1:8080/storage/avatar/${this.imageFile}`;
       this.imageGalleryFile = [];
-      this.imageGalleryPreview = [];
       this.currentGallery = product.prod_gallery
         ? product.prod_gallery.split("|")
         : [];
-
-    },
-    async deleteProduct(productID) {
-      if (confirm("Bạn có chắc chắn xoá không ?")) {
-        try {
-          eventBus.emit("show-loading");
-          const response = await api.get(`admin/product/delete/${productID}`);
-          this.message = response.data.message;
-          this.$router.go();
-          alert(this.message);
-        } catch (error) {
-          alert("Vui lòng thử lại sau !");
-        } finally {
-          eventBus.emit("hide-loading");
-        }
-      }
+      this.imageCurrentGalleryPreview = this.currentGallery.map(
+        (img) => `http://192.168.2.1:8080/storage/gallery/${img}`
+      );
     },
     async actionSaveEditProduct(productID) {
       try {
-        console.log(this.currentGallery);
         eventBus.emit("show-loading");
         const formData = new FormData();
         for (const key in this.productToEdit) {
@@ -524,8 +578,9 @@ export default {
           });
         }
         if (this.currentGallery && this.currentGallery.length > 0) {
-          formData.append("currentGallery", this.currentGallery);
+          formData.append("currentGallery", this.currentGallery.join("|"));
         }
+
         const response = await api.post(
           `admin/product/edit/${productID}`,
           formData,
@@ -539,11 +594,37 @@ export default {
         alert(this.message);
         this.$router.go();
       } catch (error) {
-        console.log("Error", error);
+        if (error.response && error.response.status === 422) {
+          this.validationErrors = error.response.data.error;
+        } else if (error) {
+          const xhr = error.response?.request;
+          if (xhr) {
+            console.error("📦 xhr status:", xhr.status);
+            console.error("📦 xhr responseText:", xhr.responseText);
+          }
+        } else {
+          alert("Có lỗi xảy ra vui lòng thử lại sau");
+        }
       } finally {
         eventBus.emit("hide-loading");
       }
     },
+    async deleteProduct(productID) {
+      if (confirm("Bạn có chắc chắn xoá không ?")) {
+        try {
+          eventBus.emit("show-loading");
+          const response = await api.get(`admin/product/delete/${productID}`);
+          this.message = response.data.message;
+          this.$router.go();
+          alert(this.message);
+        } catch (error) {
+          alert("Vui lòng thử lại sau !");
+        } finally {
+          eventBus.emit("hide-loading");
+        }
+      }
+    },
+
     onChangeImage(event) {
       const file = event.target.files[0];
       if (file) {
@@ -565,15 +646,38 @@ export default {
     },
     removeOldGalleryImage(index) {
       this.currentGallery.splice(index, 1);
+      this.imageCurrentGalleryPreview.splice(index, 1);
     },
     removeNewGalleryImage(index) {
       this.imageGalleryFile.splice(index, 1);
       this.imageGalleryPreview.splice(index, 1);
     },
+    async searchProducts() {
+      try {
+        eventBus.emit("show-loading");
+        const response = await api.get(`admin/product/search`, {
+          params: { inputQuery: this.searchQuery },
+        });
+        this.listProducts = response.data.productList.data;
+        this.currentPage = response.data.productList.current_page;
+        this.totalPages = response.data.productList.last_page;
+        this.totalProducts = response.data.productList.total;
+        this.toProduct = response.data.productList.to;
+      } catch (error) {
+        if(error.response){
+          this.message = 'Không có sản phẩm';
+        }
+      } finally {
+        eventBus.emit("hide-loading");
+      }
+    },
   },
 };
 </script>
 <style scoped>
+#thumbbox {
+  align-items: center;
+}
 .edit {
   margin-left: 5px;
 }

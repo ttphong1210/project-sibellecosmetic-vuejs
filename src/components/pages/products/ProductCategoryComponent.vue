@@ -131,9 +131,52 @@
                 </div>
               </div>
             </div>
+            
           </div>
+          <!-- Pagination -->
+          <div class="d-flex justify-content-end mt-3">
+              <nav>
+                <ul class="pagination">
+                  <li
+                    class="page-item"
+                    :class="{ disabled: currentPage === 1 }"
+                  >
+                    <a
+                      class="page-link"
+                      href="#"
+                      @click.prevent="changePage(currentPage - 1)"
+                      >Lùi</a
+                    >
+                  </li>
+                  <li
+                    v-for="page in totalPages"
+                    :key="page"
+                    class="page-item"
+                    :class="{ active: page === currentPage }"
+                  >
+                    <a
+                      class="page-link"
+                      href="#"
+                      @click.prevent="changePage(page)"
+                      >{{ page }}</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    :class="{ disabled: currentPage === totalPages }"
+                  >
+                    <a
+                      class="page-link"
+                      href="#"
+                      @click.prevent="changePage(currentPage + 1)"
+                      >Tiếp</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
         </div>
-        <SidebarFilterComponent/>
+        <SidebarFilterComponent />
       </div>
     </div>
   </section>
@@ -148,30 +191,40 @@ import SidebarFilterComponent from "../SidebarFilterComponent.vue";
 export default {
   mixins: [favoriteProductMixins, cartMixins],
   components: {
-    SidebarFilterComponent
+    SidebarFilterComponent,
   },
   data() {
     return {
       productWithCategory: [],
       categoryName: "",
+      currentPage: 1,
+      totalPages: 1,
     };
   },
   mounted() {
     this.fetchProductWithCategory();
   },
   methods: {
-    async fetchProductWithCategory() {
+    async fetchProductWithCategory(page = 1) {
       try {
         const categoryID = this.$route.params.id;
-        const response = await api.get(`products/category/${categoryID}`);
+        const response = await api.get(
+          `products/category/${categoryID}/?page=${page}`
+        );
         this.productWithCategory = response.data.productWithCategory.data;
         this.categoryName = response.data.categoryName || "";
+        this.currentPage = response.data.productWithCategory.current_page;
+        this.totalPages = response.data.productWithCategory.last_page;
       } catch (e) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", e);
         this.productWithCategory = [];
       }
     },
-   
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.fetchProductWithCategory(page);
+      }
+    },
   },
 };
 </script>

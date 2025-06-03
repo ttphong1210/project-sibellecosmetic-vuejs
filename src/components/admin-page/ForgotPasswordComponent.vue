@@ -23,28 +23,34 @@
                       <div class="form-group">
                         <input
                           type="email"
+                          v-model="form.email"
                           class="form-control form-control-user"
                           id="exampleInputEmail"
                           aria-describedby="emailHelp"
                           placeholder="Enter Email Address..."
                         />
+                        <span v-if="validatedErrors.email">
+                          {{ Array.isArray(validatedErrors.email) ? validatedErrors.email[0] : validatedErrors.email }}
+                        </span>
+
                       </div>
                       <a
-                        href="login.html"
+                        href=""
+                        @click.prevent="handleErrorEmail()"
                         class="btn btn-primary btn-user btn-block"
                       >
-                        Reset Password
+                        Gửi yêu cầu đặt lại mật khẩu
                       </a>
                     </form>
                     <hr />
                     <div class="text-center">
-                      <a class="small" href="register.html"
-                        >Create an Account!</a
+                      <a class="small" href="register-auth.html"
+                        >Tạo tài khoản mới!</a
                       >
                     </div>
                     <div class="text-center">
                       <a class="small" href="/login-auth.html"
-                        >Bạn đã có tài khoản? Đăng nhập!</a
+                        >Quay lại đăng nhập!</a
                       >
                     </div>
                   </div>
@@ -57,6 +63,48 @@
     </div>
   </div>
 </template>
+<script>
+import api from '@/axios';
+
+  export default {
+    data() {
+      return {
+        form: {
+          email: ""
+        },
+        message: "",
+        validatedErrors: {}
+      }
+    },
+    methods: {
+      handleErrorEmail(){
+        this.validatedErrors = {};
+        if(!this.form.email){
+          return this.validatedErrors.email = "Vui lòng nhập Email";
+        }else  if(!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(this.form.email)){
+          return this.validatedErrors.email = "Nhập Email đúng định dạng";
+        }
+        if(Object.keys(this.validatedErrors).length === 0){
+          this.submitToServer();
+        }
+      },
+    async submitToServer(){
+        try{
+          const response = await api.post('auth/forgot-password', {
+            email: this.form.email
+          });
+          this.message = response.data.message;
+          alert(this.message);
+          this.$router.go();
+        }catch(error){
+          if(error.response && error.response.status === 422){
+            this.validatedErrors.email = error.response.data.errors.email;
+          }
+        }
+      }
+    }
+  }
+</script>
 <style scoped>
 .bg-primary {
   min-height: 100vh;
@@ -118,5 +166,9 @@ form.user .btn-user {
   background-color: #2e59d9;
   border-color: #2653d4;
   box-shadow: 0 0 0 0.2rem rgba(105, 136, 228, 0.5);
+}
+.form-group span {
+  margin-left: 1rem;
+  color: red;
 }
 </style>

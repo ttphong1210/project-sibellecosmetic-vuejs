@@ -4,7 +4,40 @@
       <div class="col-xs-4 col-md-6 product-detail-image">
         <div class="row product-detail-image-info">
           <div class="col-md-3 image-gallery">
-            <div id="divId">
+            <!-- <div id="divId"> -->
+
+            <div class="image-gallery-vertical">
+              <div
+                v-for="(file, index) in productDetailItem.prod_gallery"
+                :key="index"
+                class="image-item"
+                @click="changeImageOnClick(file)"
+              >
+                <img class="imgStyle" :src="getImageUrl(file)" alt="Gallery Image" />
+              </div>
+            </div>
+          <!-- </div> -->
+
+              <!-- <Swiper
+              direction="vertical"
+                :slides-per-view="4"
+                :space-between="10"
+                navigation
+                class="mySwiper"
+              >
+                <SwiperSlide
+                  v-for="(file, index) in productDetailItem.prod_gallery"
+                  :key="index" 
+                >
+                  <img
+                    class="imgStyle"
+                    :src="getImageUrl(file)"
+                    alt="Product Image"
+                    @click="changeImageOnClick(file)"
+                  />
+                </SwiperSlide>
+              </Swiper> -->
+            <!-- <div id="divId">
               <img
                 v-for="(file, index) in productDetailItem.prod_gallery"
                 :key="index"
@@ -13,10 +46,13 @@
                 alt="Product Image"
                 @click="changeImageOnClick(file)"
               />
-            </div>
+            </div> -->
           </div>
           <div class="col-md-9 image-main-show">
-            <img id="mainImage" :src="mainImage" />
+            <transition name="fade" mode="out-in">
+
+            <img id="mainImage" :src="mainImage" :key="mainImage" />
+            </transition>
           </div>
         </div>
       </div>
@@ -457,4 +493,76 @@ export default {
 </script>
 <style scoped>
 @import "@/assets/css/detail.css";
-</style>
+/* .image-gallery-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px; 
+  overflow-y: auto;
+  padding-right: 5px; 
+}
+
+.image-item {
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.image-item img {
+  height: auto;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  transition: transform 0.3s ease;
+}
+
+.image-item:hover img {
+  transform: scale(1.05);
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.image-main-show{
+  max-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 769px){
+  .image-main-show{
+    max-height: 100%;
+  }
+  .image-gallery{
+    display: flex;
+    flex-direction: row ;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    align-items: center;
+  }
+
+  .image-gallery {
+    flex: 0 0 auto;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .image-gallery img {
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .image-gallery .imgStyle{
+    margin: 0 !important;
+  }
+  .image-gallery:hover img {
+    transform: scale(1.05);
+  }
+} */
+</style> 

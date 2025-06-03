@@ -170,4 +170,7 @@ export default {
 </script>
 <style scoped>
     @import "@/assets/css/cart.css";
+    .btn-delete{
+      background-color: white;
+    }
 </style>

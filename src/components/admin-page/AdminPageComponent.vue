@@ -4,38 +4,32 @@
       <!-- Sidebar toggle button-->
       <a
         class="app-sidebar__toggle"
+        @click.prevent="toggleSidebar"
         href="#"
         data-toggle="sidebar"
         aria-label="Hide Sidebar"
-      ></a>
+      >MENU</a>
     </div>
-    <div class="col-md-4">
-      <!-- Search box -->
-      <div class="search-bar">
-        <input
-          type="text"
-          v-model="searchQuery"
-          @keydown.enter="goToSearch"
-          class="form-control"
-          placeholder="Tìm kiếm..."
-          style="width: 100%; max-width: 300px"
-        />
-      </div>
-    </div>
+    <div class="col-md-4"></div>
     <div class="col-md-4">
       <!-- Navbar Right Menu-->
       <ul class="app-nav">
         <li>
-          <a class="app-nav__item" @click.prevent="actionLogOut()"
-            ><i class="bx bx-log-out bx-rotate-180"></i>
+          <a class="app-nav__item" @click.prevent="actionLogOut()">
+            <i class="bx bx-log-out bx-rotate-180"></i>
           </a>
         </li>
       </ul>
     </div>
   </header>
   <!-- Sidebar menu-->
-  <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-  <aside class="app-sidebar">
+  <div
+    class="app-sidebar__overlay"
+    data-toggle="sidebar"
+    :class="{ active: sidebarVisible }"
+    @click="sidebarVisible = false"
+  ></div>
+  <aside class="app-sidebar" :class="{ active: sidebarVisible }">
     <div class="app-sidebar__user">
       <div>
         <p class="app-sidebar__user-name"><b>Si Belle Cosmetic</b></p>
@@ -45,19 +39,18 @@
     <hr />
     <ul class="app-menu">
       <li>
-        <a class="app-menu__item haha" href="phan-mem-ban-hang.html"
+        <router-link class="app-menu__item haha" to="/phan-mem-ban-hang.html"
           ><i class="app-menu__icon bx bx-cart-alt"></i>
-          <span class="app-menu__label">POS Bán Hàng</span></a
-        >
+          <span class="app-menu__label">POS Bán Hàng</span></router-link>
       </li>
       <li>
-        <router-link to="" class="app-menu__item">
+        <router-link to="/admin/index.html" class="app-menu__item">
           <i class="app-menu__icon bx bx-purchase-tag-alt"></i>
           <span class="app-menu__label">Bảng điều khiển</span>
         </router-link>
       </li>
       <li>
-        <router-link to="" class="app-menu__item">
+        <router-link to="/admin/list-user.html" class="app-menu__item">
           <i class="app-menu__icon bx bx-purchase-tag-alt"></i>
           <span class="app-menu__label">Quản lý nhân viên</span>
         </router-link>
@@ -75,7 +68,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="" class="app-menu__item">
+        <router-link to="/admin/list-order.html" class="app-menu__item">
           <i class="app-menu__icon bx bx-purchase-tag-alt"></i>
           <span class="app-menu__label">Quản lý đơn hàng</span>
         </router-link>
@@ -126,7 +119,7 @@ export default {
       user: null,
       listCategory: [],
       listBrand: [],
-      searchQuery: ""
+      sidebarVisible: false,
     };
   },
   async mounted() {
@@ -138,6 +131,9 @@ export default {
     await this.fetchData("admin/brand/list-brands");
   },
   methods: {
+    toggleSidebar() {
+      this.sidebarVisible = !this.sidebarVisible;
+    },
     async actionLogOut() {
       if (confirm("Bạn có chắc muốn đăng xuất ?")) {
         eventBus.emit("show-loading");
@@ -154,7 +150,7 @@ export default {
       }
     },
     async fetchData(type) {
-      try{
+      try {
         const response = await api.get(type);
         if (response.data) {
           if (type === "admin/category") {
@@ -163,17 +159,9 @@ export default {
             this.listBrand = response.data.listBrands;
           }
         }
-      }catch(error){
-        console.log('Error', error);
+      } catch (error) {
+        console.log("Error", error);
       }
-    },
-    goToSearch() {
-      this.$router.push({
-        path: "search",
-        query: {
-          result: this.searchQuery,
-        },
-      });
     },
   },
 };

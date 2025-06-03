@@ -14,13 +14,11 @@ import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 // import './assets/css/bootstrap.css';
 // import './assets/css/fonts/themify-icons.css';
 // import '@/assets/css/admin-css/main.css';
-
 // Import BootstrapVueNext
 import BootstrapVueNext from 'bootstrap-vue-next';
 
 import router from './router/index.js';
 import globalMixins from './mixins/globalMixins';
-
 // Use BootstrapVueNext throughout your project
 app.use(BootstrapVueNext);
 
